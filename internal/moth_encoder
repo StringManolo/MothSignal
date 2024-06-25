@@ -12,7 +12,7 @@ function archivoABase64(filename) {
 // Función para generar un tono de audio a partir de una frecuencia y duración
 function generarTono(frecuencia, duracion, nombreArchivo, maxFrequency) {
     return new Promise((resolve, reject) => {
-        const sampleRate = maxFrequency * 2; // Doble de la frecuencia máxima
+        const sampleRate = maxFrequency * 2 + 100; // Doble de la frecuencia máxima y un margen
         const comando = `ffmpeg -f lavfi -i "sine=frequency=${frecuencia}:duration=${duracion}" -ar ${sampleRate} "${nombreArchivo}"`;
         console.log(`EJECUTANDO el comando: ${comando}\n`);
         exec(comando, (error, stdout, stderr) => {

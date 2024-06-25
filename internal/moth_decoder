@@ -79,7 +79,7 @@ async function extractFrequencies(audioFile, intervalInSeconds, maxFrequency) {
         const spectrogramFile = 'espectrogram.png';
 
         // Comando para generar el espectrograma usando sox
-        const soxCommand = `sox ${audioFile} -n spectrogram -o ${spectrogramFile}`;
+        const soxCommand = `sox ${audioFile} -n spectrogram -Z -9 -o ${spectrogramFile}`;
 
         // Ejecutar el comando sox para generar el espectrograma
         exec(soxCommand, async (error, stdout, stderr) => {
