@@ -28,3 +28,7 @@ Posiblemente necesario cambiar el modo de detección para evitar falsos positivo
 Posiblemente no funciona por la compresión
 
 ##### Reducir al tamaño mínimo posible la duración de los tonos
+
+##### Tratas de remplazar comandos por librerías
+
+##### Portar a un solo archivo js
