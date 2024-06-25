@@ -26,3 +26,5 @@ Posiblemente necesario cambiar el modo de detección para evitar falsos positivo
 
 ##### Testear mp3
 Posiblemente no funciona por la compresión
+
+##### Reducir al tamaño mínimo posible la duración de los tonos
