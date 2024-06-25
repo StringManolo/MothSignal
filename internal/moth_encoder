@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const { exec } = require('child_process');
+
+// Función para leer el archivo y convertirlo a Base64
+function archivoABase64(filename) {
+    const archivo = fs.readFileSync(filename);
+    return archivo.toString('base64');
+}
+
+// Función para generar un tono de audio a partir de una frecuencia y duración
+function generarTono(frecuencia, duracion, nombreArchivo, maxFrequency) {
+    return new Promise((resolve, reject) => {
+        const sampleRate = maxFrequency * 2; // Doble de la frecuencia máxima
+        const comando = `ffmpeg -f lavfi -i "sine=frequency=${frecuencia}:duration=${duracion}" -ar ${sampleRate} "${nombreArchivo}"`;
+        console.log(`EJECUTANDO el comando: ${comando}\n`);
+        exec(comando, (error, stdout, stderr) => {
+            if (error) {
+                reject(`Error al generar el tono: ${error.message}`);
+                return;
+            }
+            resolve(`Tono generado con éxito: ${nombreArchivo}`);
+        });
+    });
+}
+
+// Función principal que convierte una cadena Base64 en tonos de audio
+async function convertirBase64ATonos(base64String, mapsPath) {
+    const tonosDirectorio = 'tonos_encoding/';
+    try {
+        const maps = JSON.parse(fs.readFileSync(mapsPath));
+        const duracionPorCaracter = maps.duracion;
+
+        // Crear el directorio si no existe
+        if (!fs.existsSync(tonosDirectorio)) {
+            fs.mkdirSync(tonosDirectorio);
+        }
+
+        // Copiar maps.json al directorio de tonos
+        fs.copyFileSync(mapsPath, `${tonosDirectorio}maps.json`);
+
+        // Obtener la frecuencia máxima del archivo maps.json
+        const maxFrequency = maps.rango_frecuencias[1];
+
+        // Iterar sobre cada carácter de la cadena Base64
+        for (let i = 0; i < base64String.length; i++) {
+            const caracter = base64String.charAt(i);
+            const tono = Object.values(maps.tonos).find(t => t.caracter === caracter);
+
+            if (tono) {
+                const nombreArchivo = `${tonosDirectorio}tono_${i.toString().padStart(3, '0')}.wav`;
+                console.log(`Generando tono para el caracter: ${caracter} con frecuencia: ${tono.frecuencia} y nombre de archivo: ${nombreArchivo}`);
+                await generarTono(tono.frecuencia, duracionPorCaracter, nombreArchivo, maxFrequency);
+            } else {
+                console.error(`No se encontró el tono para el carácter: ${caracter}`);
+            }
+        }
+
+        console.log('Tonos generados correctamente en el directorio:', tonosDirectorio);
+    } catch (error) {
+        console.error('Error al convertir Base64 a tonos:', error);
+    }
+}
+
+// Obtener los argumentos de la línea de comandos
+const filename = process.argv[2];
+const mapsPath = process.argv[3];
+
+// Llamar a la función principal con los argumentos proporcionados
+if (filename && mapsPath) {
+    const base64String = archivoABase64(filename);
+    convertirBase64ATonos(base64String, mapsPath);
+} else {
+    console.error('Debe proporcionar el nombre del archivo y la ruta del maps.json como argumentos.');
+}
+

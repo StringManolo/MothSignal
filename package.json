@@ -1,0 +1,22 @@
+{
+  "name": "mothsignal",
+  "version": "1.0.0",
+  "description": "Encode/Decode Base64 in wav sounds",
+  "main": "moth.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StringManolo/MothSignal.git"
+  },
+  "author": "https://github.com/StringManolo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StringManolo/MothSignal/issues"
+  },
+  "homepage": "https://github.com/StringManolo/MothSignal#readme",
+  "dependencies": {
+    "sharp": "^0.33.4"
+  }
+}

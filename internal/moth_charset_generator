@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const { exec } = require('child_process');
+
+// Función para generar un tono de audio a partir de una frecuencia y duración
+function generarTono(frecuencia, duracion, nombreArchivo, sampleRate) {
+    return new Promise((resolve, reject) => {
+        const comando = `ffmpeg -f lavfi -i "sine=frequency=${frecuencia}:duration=${duracion}:sample_rate=${sampleRate}" -ar ${sampleRate} "${nombreArchivo}"`;
+        console.log(`EJECUTANDO el comando: ${comando}\n`);
+        exec(comando, (error, stdout, stderr) => {
+            if (error) {
+                reject(`Error al generar el tono: ${error.message}`);
+                return;
+            }
+            resolve(`Tono generado con éxito: ${nombreArchivo}`);
+        });
+    });
+}
+
+// Función para crear el mapa JSON con caracteres y frecuencias
+function crearMapa(base64String, multiplicador, duracion) {
+    const mapa = {
+        rango_frecuencias: [Infinity, -Infinity],
+        duracion: duracion,
+        multiplicador: multiplicador,
+        tonos: {}
+    };
+
+    for (let i = 0; i < base64String.length; i++) {
+        const caracter = base64String.charAt(i);
+        const frecuencia = caracter.charCodeAt(0) * multiplicador - 4000; // Ajustar la frecuencia 
+        const nombreArchivo = `tono_${i.toString().padStart(3, '0')}.wav`;
+        mapa.tonos[i] = { caracter: caracter, frecuencia: frecuencia, archivo: nombreArchivo };
+
+        if (frecuencia < mapa.rango_frecuencias[0]) {
+            mapa.rango_frecuencias[0] = frecuencia;
+        }
+        if (frecuencia > mapa.rango_frecuencias[1]) {
+            mapa.rango_frecuencias[1] = frecuencia;
+        }
+    }
+
+    return mapa;
+}
+
+// Función principal que convierte una cadena Base64 en tonos de audio
+async function convertirBase64ATonos(base64String, multiplicador, duracion) {
+    const tonosDirectorio = 'tonos/';
+
+    try {
+        // Crear el directorio si no existe
+        if (!fs.existsSync(tonosDirectorio)) {
+            fs.mkdirSync(tonosDirectorio);
+        }
+
+        // Crear y guardar el mapa
+        const mapa = crearMapa(base64String, multiplicador, duracion);
+        fs.writeFileSync(`${tonosDirectorio}/maps.json`, JSON.stringify(mapa, null, 2));
+
+        // Determinar la frecuencia de muestreo necesaria
+        const sampleRate = Math.ceil(mapa.rango_frecuencias[1] * 2);
+
+        // Generar los tonos
+        for (let i = 0; i < base64String.length; i++) {
+            const frecuencia = mapa.tonos[i].frecuencia;
+            const nombreArchivo = `${tonosDirectorio}${mapa.tonos[i].archivo}`;
+            console.log(`Generando tono para el caracter: ${mapa.tonos[i].caracter} con frecuencia: ${frecuencia} y nombre de archivo: ${nombreArchivo}`);
+            await generarTono(frecuencia, duracion, nombreArchivo, sampleRate);
+        }
+
+        console.log('Tonos generados correctamente en el directorio:', tonosDirectorio);
+    } catch (error) {
+        console.error('Error al convertir Base64 a tonos:', error);
+    }
+}
+
+// Obtener la cadena Base64 de los argumentos de la línea de comandos
+const base64String = process.argv[2];
+const multiplicador = process.argv[3] ? parseFloat(process.argv[3]) : 100; // Multiplixador pequeño (100) para admitir frecuencias menores (mp3 corta por encima de 17kHz)
+const duracion = process.argv[4] ? parseFloat(process.argv[4]) : 0.3;
+
+// Llamar a la función principal con la cadena Base64 proporcionada
+if (base64String) {
+    convertirBase64ATonos(base64String, multiplicador, duracion);
+} else {
+    console.error('Debe proporcionar una cadena Base64 como argumento.');
+}
+

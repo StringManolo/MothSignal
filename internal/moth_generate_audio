@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+const fs = require('fs');
+const { exec } = require('child_process');
+
+const tonosDirectorio = process.argv[2] || 'tonos/';
+const archivoSalidaMP3 = 'tonos_secuenciados.mp3';
+const archivoSalidaWAV = `${tonosDirectorio}/tonos_secuenciados.wav`;
+const mapFilePath = `${tonosDirectorio}maps.json`;
+
+// Función para obtener la tasa de muestreo desde maps.json
+function obtenerTasaDeMuestreo() {
+    try {
+        const mapData = fs.readFileSync(mapFilePath, 'utf8');
+        const mapJson = JSON.parse(mapData);
+        const frecuenciaMaxima = Math.max(...mapJson.rango_frecuencias);
+        return frecuenciaMaxima * 2;
+    } catch (error) {
+        console.error('Error al leer o parsear maps.json:', error);
+        return null;
+    }
+}
+
+// Función para secuenciar tonos WAV en un solo archivo MP3 usando ffmpeg del sistema
+function secuenciarTonosEnMP3() {
+    try {
+        const archivosWAV = fs.readdirSync(tonosDirectorio).filter(file => file.endsWith('.wav'));
+
+        if (archivosWAV.length === 0) {
+            console.error('No se encontraron archivos WAV en el directorio de tonos.');
+            return;
+        }
+
+        const sampleRate = obtenerTasaDeMuestreo();
+        if (!sampleRate) {
+            console.error('No se pudo determinar la tasa de muestreo.');
+            return;
+        }
+
+        // Iterar sobre cada archivo WAV y crear una cadena de comando para ffmpeg
+        let comando = '';
+        archivosWAV.forEach((archivo, index) => {
+            const inputPath = `${tonosDirectorio}${archivo}`;
+            comando += `-i "${inputPath}" `;
+        });
+
+        // Agregar la configuración de salida WAV al comando ffmpeg
+        comando += `-filter_complex "concat=n=${archivosWAV.length}:v=0:a=1[out]" -map "[out]" -ar ${sampleRate} "${archivoSalidaWAV}"`;
+
+        // Ejecutar el comando ffmpeg para crear el archivo temporal WAV
+        exec(`ffmpeg ${comando}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error('Error al concatenar archivos WAV:', error);
+                return;
+            }
+
+            console.log(`Tonos secuenciados correctamente en ${archivoSalidaWAV}`);
+
+            // Convertir el archivo temporal WAV a MP3
+            /*
+            const comandoMP3 = `ffmpeg -i "${archivoSalidaWAV}" -ar 48000 "${tonosDirectorio}/${archivoSalidaMP3}"`;
+            exec(comandoMP3, (error, stdout, stderr) => {
+                if (error) {
+                    console.error('Error al convertir WAV a MP3:', error);
+                    return;
+                }
+                console.log(`Tonos secuenciados correctamente en ${archivoSalidaMP3}`);
+
+                // Eliminar el archivo temporal WAV
+                //fs.unlinkSync(archivoSalidaWAV);
+            });
+            */
+        });
+    } catch (error) {
+        console.error('Error al leer los archivos de tonos:', error);
+    }
+}
+
+// Llamar a la función para secuenciar los tonos en un archivo MP3
+secuenciarTonosEnMP3();
+

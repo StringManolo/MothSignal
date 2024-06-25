@@ -1,0 +1,335 @@
+{
+  "rango_frecuencias": [
+    300,
+    8200
+  ],
+  "duracion": 0.3,
+  "multiplicador": 100,
+  "tonos": {
+    "0": {
+      "caracter": "A",
+      "frecuencia": 2500,
+      "archivo": "tono_000.wav"
+    },
+    "1": {
+      "caracter": "B",
+      "frecuencia": 2600,
+      "archivo": "tono_001.wav"
+    },
+    "2": {
+      "caracter": "C",
+      "frecuencia": 2700,
+      "archivo": "tono_002.wav"
+    },
+    "3": {
+      "caracter": "D",
+      "frecuencia": 2800,
+      "archivo": "tono_003.wav"
+    },
+    "4": {
+      "caracter": "E",
+      "frecuencia": 2900,
+      "archivo": "tono_004.wav"
+    },
+    "5": {
+      "caracter": "F",
+      "frecuencia": 3000,
+      "archivo": "tono_005.wav"
+    },
+    "6": {
+      "caracter": "G",
+      "frecuencia": 3100,
+      "archivo": "tono_006.wav"
+    },
+    "7": {
+      "caracter": "H",
+      "frecuencia": 3200,
+      "archivo": "tono_007.wav"
+    },
+    "8": {
+      "caracter": "I",
+      "frecuencia": 3300,
+      "archivo": "tono_008.wav"
+    },
+    "9": {
+      "caracter": "J",
+      "frecuencia": 3400,
+      "archivo": "tono_009.wav"
+    },
+    "10": {
+      "caracter": "K",
+      "frecuencia": 3500,
+      "archivo": "tono_010.wav"
+    },
+    "11": {
+      "caracter": "L",
+      "frecuencia": 3600,
+      "archivo": "tono_011.wav"
+    },
+    "12": {
+      "caracter": "M",
+      "frecuencia": 3700,
+      "archivo": "tono_012.wav"
+    },
+    "13": {
+      "caracter": "N",
+      "frecuencia": 3800,
+      "archivo": "tono_013.wav"
+    },
+    "14": {
+      "caracter": "O",
+      "frecuencia": 3900,
+      "archivo": "tono_014.wav"
+    },
+    "15": {
+      "caracter": "P",
+      "frecuencia": 4000,
+      "archivo": "tono_015.wav"
+    },
+    "16": {
+      "caracter": "Q",
+      "frecuencia": 4100,
+      "archivo": "tono_016.wav"
+    },
+    "17": {
+      "caracter": "R",
+      "frecuencia": 4200,
+      "archivo": "tono_017.wav"
+    },
+    "18": {
+      "caracter": "S",
+      "frecuencia": 4300,
+      "archivo": "tono_018.wav"
+    },
+    "19": {
+      "caracter": "T",
+      "frecuencia": 4400,
+      "archivo": "tono_019.wav"
+    },
+    "20": {
+      "caracter": "U",
+      "frecuencia": 4500,
+      "archivo": "tono_020.wav"
+    },
+    "21": {
+      "caracter": "V",
+      "frecuencia": 4600,
+      "archivo": "tono_021.wav"
+    },
+    "22": {
+      "caracter": "W",
+      "frecuencia": 4700,
+      "archivo": "tono_022.wav"
+    },
+    "23": {
+      "caracter": "X",
+      "frecuencia": 4800,
+      "archivo": "tono_023.wav"
+    },
+    "24": {
+      "caracter": "Y",
+      "frecuencia": 4900,
+      "archivo": "tono_024.wav"
+    },
+    "25": {
+      "caracter": "Z",
+      "frecuencia": 5000,
+      "archivo": "tono_025.wav"
+    },
+    "26": {
+      "caracter": "a",
+      "frecuencia": 5700,
+      "archivo": "tono_026.wav"
+    },
+    "27": {
+      "caracter": "b",
+      "frecuencia": 5800,
+      "archivo": "tono_027.wav"
+    },
+    "28": {
+      "caracter": "c",
+      "frecuencia": 5900,
+      "archivo": "tono_028.wav"
+    },
+    "29": {
+      "caracter": "d",
+      "frecuencia": 6000,
+      "archivo": "tono_029.wav"
+    },
+    "30": {
+      "caracter": "e",
+      "frecuencia": 6100,
+      "archivo": "tono_030.wav"
+    },
+    "31": {
+      "caracter": "f",
+      "frecuencia": 6200,
+      "archivo": "tono_031.wav"
+    },
+    "32": {
+      "caracter": "g",
+      "frecuencia": 6300,
+      "archivo": "tono_032.wav"
+    },
+    "33": {
+      "caracter": "h",
+      "frecuencia": 6400,
+      "archivo": "tono_033.wav"
+    },
+    "34": {
+      "caracter": "i",
+      "frecuencia": 6500,
+      "archivo": "tono_034.wav"
+    },
+    "35": {
+      "caracter": "j",
+      "frecuencia": 6600,
+      "archivo": "tono_035.wav"
+    },
+    "36": {
+      "caracter": "k",
+      "frecuencia": 6700,
+      "archivo": "tono_036.wav"
+    },
+    "37": {
+      "caracter": "l",
+      "frecuencia": 6800,
+      "archivo": "tono_037.wav"
+    },
+    "38": {
+      "caracter": "m",
+      "frecuencia": 6900,
+      "archivo": "tono_038.wav"
+    },
+    "39": {
+      "caracter": "n",
+      "frecuencia": 7000,
+      "archivo": "tono_039.wav"
+    },
+    "40": {
+      "caracter": "o",
+      "frecuencia": 7100,
+      "archivo": "tono_040.wav"
+    },
+    "41": {
+      "caracter": "p",
+      "frecuencia": 7200,
+      "archivo": "tono_041.wav"
+    },
+    "42": {
+      "caracter": "q",
+      "frecuencia": 7300,
+      "archivo": "tono_042.wav"
+    },
+    "43": {
+      "caracter": "r",
+      "frecuencia": 7400,
+      "archivo": "tono_043.wav"
+    },
+    "44": {
+      "caracter": "s",
+      "frecuencia": 7500,
+      "archivo": "tono_044.wav"
+    },
+    "45": {
+      "caracter": "t",
+      "frecuencia": 7600,
+      "archivo": "tono_045.wav"
+    },
+    "46": {
+      "caracter": "u",
+      "frecuencia": 7700,
+      "archivo": "tono_046.wav"
+    },
+    "47": {
+      "caracter": "v",
+      "frecuencia": 7800,
+      "archivo": "tono_047.wav"
+    },
+    "48": {
+      "caracter": "w",
+      "frecuencia": 7900,
+      "archivo": "tono_048.wav"
+    },
+    "49": {
+      "caracter": "x",
+      "frecuencia": 8000,
+      "archivo": "tono_049.wav"
+    },
+    "50": {
+      "caracter": "y",
+      "frecuencia": 8100,
+      "archivo": "tono_050.wav"
+    },
+    "51": {
+      "caracter": "z",
+      "frecuencia": 8200,
+      "archivo": "tono_051.wav"
+    },
+    "52": {
+      "caracter": "0",
+      "frecuencia": 800,
+      "archivo": "tono_052.wav"
+    },
+    "53": {
+      "caracter": "1",
+      "frecuencia": 900,
+      "archivo": "tono_053.wav"
+    },
+    "54": {
+      "caracter": "2",
+      "frecuencia": 1000,
+      "archivo": "tono_054.wav"
+    },
+    "55": {
+      "caracter": "3",
+      "frecuencia": 1100,
+      "archivo": "tono_055.wav"
+    },
+    "56": {
+      "caracter": "4",
+      "frecuencia": 1200,
+      "archivo": "tono_056.wav"
+    },
+    "57": {
+      "caracter": "5",
+      "frecuencia": 1300,
+      "archivo": "tono_057.wav"
+    },
+    "58": {
+      "caracter": "6",
+      "frecuencia": 1400,
+      "archivo": "tono_058.wav"
+    },
+    "59": {
+      "caracter": "7",
+      "frecuencia": 1500,
+      "archivo": "tono_059.wav"
+    },
+    "60": {
+      "caracter": "8",
+      "frecuencia": 1600,
+      "archivo": "tono_060.wav"
+    },
+    "61": {
+      "caracter": "9",
+      "frecuencia": 1700,
+      "archivo": "tono_061.wav"
+    },
+    "62": {
+      "caracter": "+",
+      "frecuencia": 300,
+      "archivo": "tono_062.wav"
+    },
+    "63": {
+      "caracter": "/",
+      "frecuencia": 700,
+      "archivo": "tono_063.wav"
+    },
+    "64": {
+      "caracter": "=",
+      "frecuencia": 2100,
+      "archivo": "tono_064.wav"
+    }
+  }
+}
