@@ -20,4 +20,9 @@ El espectrograma generado contiene poco espacio entre los bloques amarillos, por
 
 ##### Testear ultrasonidos (implementar)
 
- 
+##### Mezclar con .wav existentes
+Quizas necesario eliminar primero las frecuencias exactas ya existentes.  
+Posiblemente necesario cambiar el modo de detección para evitar falsos positivos. (Utilizar el ancho de tono en los cálculos)
+
+##### Testear mp3
+Posiblemente no funciona por la compresión
