@@ -180,26 +180,44 @@ async function processSpectrogram(spectrogramFile, maxFrequency) {
         }
 
         // Función para filtrar las entradas y obtener solo startYs únicos por columna
-        function filterEntries(entries) {
-            const seenStartYs = new Set();
-            const filteredEntries = [];
-            for (const entry of entries) {
-                if (!seenStartYs.has(entry.startY)) {
-                    seenStartYs.add(entry.startY);
-                    filteredEntries.push(entry);
-                }
-            }
-            return filteredEntries;
-        }
+function filterEntries(entries) {
+    const filteredEntries = [];
+    let previousStartY = undefined;
 
+    for (const entry of entries) {
+        if (entry.startY !== previousStartY) {
+            filteredEntries.push(entry);
+            previousStartY = entry.startY;
+        }
+    }
+
+    return filteredEntries;
+}
+
+
+
+
+      
         // Filtrar para obtener solo la primera entrada por cada columna
         const uniqueStartYFrequencies = filterEntries(frequencies);
 
         // Filtrar para eliminar entradas que no tengan al menos 20 píxeles de distancia entre startY y la anterior
-        const filteredFrequencies = uniqueStartYFrequencies.filter((entry, index, arr) => {
+        const filteredFrequencies1 = uniqueStartYFrequencies.filter((entry, index, arr) => {
             if (index === 0) return true;
             return Math.abs(entry.startY - arr[index - 1].startY) >= 20;
         });
+
+
+        
+        const filteredFrequencies = filteredFrequencies1.filter((entry, index, arr) => {
+            if (index === 0) return true;
+            return Math.abs(entry.startX - arr[index - 1].startX) >= 20;
+        })
+
+
+
+
+
 
         // Eliminar la última entrada del array
         if (filteredFrequencies.length > 0) {
@@ -208,6 +226,9 @@ async function processSpectrogram(spectrogramFile, maxFrequency) {
 
         // Mostrar las frecuencias obtenidas como caracteres
         //console.log('Caracteres decodificados:');
+      
+//console.table(filteredFrequencies);
+
         const decodedCharacters = filteredFrequencies.map(freq => {
             const { frequency } = freq;
             return frequencyToChar[frequency] || ''; // Obtener el caracter correspondiente a la frecuencia

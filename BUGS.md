@@ -1,1 +1,1 @@
-- Problem with decoding some b64
+- Problem with decoding some b64 (Sox spectrogram colors are not realiable).
