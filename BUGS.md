@@ -1,3 +1,3 @@
 # BUGS
 
-- Se eliminan los caracteres repetidos del base64 generado
+- Se eliminan los caracteres repetidos del base64 generado (parcialmente fixeado)

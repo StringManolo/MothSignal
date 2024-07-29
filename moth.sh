@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 if [ $# -eq 0 ]; then
     echo -e "Usage: moth.sh [operation] [file]\n\nmoth encode hello.txt\nmoth decode hello.wav"
@@ -36,12 +36,12 @@ if [ "$1" == "encode" ] || [ "$1" == "e" ] || [ "$1" == "-e" ] || [ "$1" == "--e
 
   mv ./tonos_encoding/tonos_secuenciados.wav "../$2".wav
 
-  echo "[DEBUG] BASE64: $(cat ../$2 | base64)"
+  # echo "[DEBUG] BASE64: $(cat ../$2 | base64)"
   echo "File generated: $2.wav"
 elif [ "$1" == "decode" ] || [ "$1" == "d" ] || [ "$1" == "-d" ] || [ "$1" == "--decode" ]; then
   # Decode wav to base64
   decodedbase64=$(./moth_decoder "../$2")
-  echo "[DEBUG] BASE64: $decodedbase64"
+  # echo "[DEBUG] BASE64: $decodedbase64"
   echo $decodedbase64 | base64 -d;
 
 else

@@ -2,16 +2,19 @@
 
 Encode/Decode Base64 in wav
 
+## Notice
+- Base64 decoding is not perfect. Got a 98% precision on decoding from audio to base64.
+
 ## Requirements
 - Linux
 - Bash
 - Node.js
 - npm
 - ffmpeg
-- sox
 
 ##### Node modules
-- sharp
+- dsp.js
+- wav-decoder
 
 
 ## Install
@@ -22,19 +25,17 @@ cd MothSignal
 npm install
 
 # install your dependencies using your system package manager for example:
-# apt install ffmpeg sox
-
-# To install moth as a command line tool
-chmod +775 install.sh
-./install.sh  # You can use ./moth.sh instead if you prefer
-
+# apt install ffmpeg
+# apk add ffmpeg
 ```
 
 ## Usage
 ```bash
 # Encode
-moth encode <input_file> 
+./moth.sh encode fileToEncode
 
 # Decode
-moth decode <input_file>
+./moth.sh decode fileToEncode.wav
 ```
+
+A fileToEncode.wav will be generated in same folder as fileToEncode file. 

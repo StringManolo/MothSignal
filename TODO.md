@@ -1,8 +1,5 @@
 # TODO
 
-##### Implementar split de audios largos (chunks) para analizar audios largos
-El espectrograma generado contiene poco espacio entre los bloques amarillos, por lo cual la detección de frecuencias no funciona correctamente al codificar mensajes largos.
-
 ##### Optimizar encoding 
 - Utilizar cp en lugar de generar los tonos con ffmpeg para tonos que ya existan. O en su defecto usar la xarpeta de tonos/ para copiarlos.
 
@@ -11,8 +8,6 @@ El espectrograma generado contiene poco espacio entre los bloques amarillos, por
 ##### Incluir Play en modos de operacion
 
 ##### Incluir Verbose en argumentos
-
-##### Eliminar mensajes de Debug
 
 ##### Manejo de errores
 
@@ -29,6 +24,10 @@ Posiblemente no funciona por la compresión
 
 ##### Reducir al tamaño mínimo posible la duración de los tonos
 
-##### Tratas de remplazar comandos por librerías
+##### Tratar de remplazar comandos por librerías
 
 ##### Portar a un solo archivo js
+
+##### Añadir argumento ultrasound para mover las frecuentas a ultrasonidos
+
+##### Allow mutiple output formats

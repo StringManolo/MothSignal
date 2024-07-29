@@ -1,252 +1,119 @@
 #!/usr/bin/env node
 
-const sharp = require('sharp');
-const { exec } = require('child_process');
 const fs = require('fs');
+const WavDecoder = require('wav-decoder');
+const DSP = require('dsp.js');
 
-// Definir las frecuencias y sus caracteres correspondientes
-const frequencyToChar = {
-    2500: 'A',
-    2600: 'B',
-    2700: 'C',
-    2800: 'D',
-    2900: 'E',
-    3000: 'F',
-    3100: 'G',
-    3200: 'H',
-    3300: 'I',
-    3400: 'J',
-    3500: 'K',
-    3600: 'L',
-    3700: 'M',
-    3800: 'N',
-    3900: 'O',
-    4000: 'P',
-    4100: 'Q',
-    4200: 'R',
-    4300: 'S',
-    4400: 'T',
-    4500: 'U',
-    4600: 'V',
-    4700: 'W',
-    4800: 'X',
-    4900: 'Y',
-    5000: 'Z',
-    5700: 'a',
-    5800: 'b',
-    5900: 'c',
-    6000: 'd',
-    6100: 'e',
-    6200: 'f',
-    6300: 'g',
-    6400: 'h',
-    6500: 'i',
-    6600: 'j',
-    6700: 'k',
-    6800: 'l',
-    6900: 'm',
-    7000: 'n',
-    7100: 'o',
-    7200: 'p',
-    7300: 'q',
-    7400: 'r',
-    7500: 's',
-    7600: 't',
-    7700: 'u',
-    7800: 'v',
-    7900: 'w',
-    8000: 'x',
-    8100: 'y',
-    8200: 'z',
-    800: '0',
-    900: '1',
-    1000: '2',
-    1100: '3',
-    1200: '4',
-    1300: '5',
-    1400: '6',
-    1500: '7',
-    1600: '8',
-    1700: '9',
-    300: '+',
-    700: '/',
-    2100: '='
+const frequencyToCharMap = {
+  2500: 'A', 2600: 'B', 2700: 'C', 2800: 'D', 2900: 'E',
+  3000: 'F', 3100: 'G', 3200: 'H', 3300: 'I', 3400: 'J',
+  3500: 'K', 3600: 'L', 3700: 'M', 3800: 'N', 3900: 'O',
+  4000: 'P', 4100: 'Q', 4200: 'R', 4300: 'S', 4400: 'T',
+  4500: 'U', 4600: 'V', 4700: 'W', 4800: 'X', 4900: 'Y',
+  5000: 'Z', 5700: 'a', 5800: 'b', 5900: 'c', 6000: 'd',
+  6100: 'e', 6200: 'f', 6300: 'g', 6400: 'h', 6500: 'i',
+  6600: 'j', 6700: 'k', 6800: 'l', 6900: 'm', 7000: 'n',
+  7100: 'o', 7200: 'p', 7300: 'q', 7400: 'r', 7500: 's',
+  7600: 't', 7700: 'u', 7800: 'v', 7900: 'w', 8000: 'x',
+  8100: 'y', 8200: 'z', 800: '0', 900: '1', 1000: '2',
+  1100: '3', 1200: '4', 1300: '5', 1400: '6', 1500: '7',
+  1600: '8', 1700: '9', 300: '+', 700: '/', 2100: '='
 };
 
-async function extractFrequencies(audioFile, intervalInSeconds, maxFrequency) {
-    try {
-        // Generar el nombre del archivo del espectrograma
-        const spectrogramFile = 'espectrogram.png';
-
-        // Comando para generar el espectrograma usando sox
-        const soxCommand = `sox ${audioFile} -n spectrogram -Z -9 -o ${spectrogramFile}`;
-
-        // Ejecutar el comando sox para generar el espectrograma
-        exec(soxCommand, async (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error al ejecutar el comando: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.error(`Error: ${stderr}`);
-                return;
-            }
-
-            // Verificar si se generó correctamente el espectrograma
-            if (!fs.existsSync(spectrogramFile)) {
-                console.error('Error: No se pudo generar el espectrograma.');
-                return;
-            }
-
-            // Procesar el espectrograma para extraer frecuencias
-            await processSpectrogram(spectrogramFile, maxFrequency);
-        });
-
-    } catch (err) {
-        console.error('Error al procesar el archivo de audio:', err);
-    }
+function nextPowerOf2(x) {
+  return Math.pow(2, Math.ceil(Math.log2(x)));
 }
 
-async function processSpectrogram(spectrogramFile, maxFrequency) {
-    try {
-        // Cargar la imagen del espectrograma generada por sox con sharp
-        const image = await sharp(spectrogramFile).raw().toBuffer();
-
-        // Obtener dimensiones de la imagen
-        const { width, height } = await sharp(spectrogramFile).metadata();
-
-        // Variable para almacenar las frecuencias encontradas
-        const frequencies = [];
-
-        // Recorrer la imagen de abajo hacia arriba por columnas
-        for (let x = 0; x < width; x++) {
-            let foundYellow = false;
-            let startY = -1;
-            let startX = -1;
-            let yellowLength = 0;
-
-            // Recorrer la columna actual de abajo hacia arriba
-            for (let y = height - 1; y >= 0; y--) {
-                const pixel = image.slice((y * width + x) * 3, (y * width + x + 1) * 3); // Leer valor de píxel (3 canales: R, G, B)
-                // Permitir variaciones en el rango de color amarillo
-                if (pixel[0] >= 200 && pixel[1] >= 200 && pixel[2] <= 100) {
-                    if (!foundYellow) {
-                        foundYellow = true;
-                        startY = y; // Guardar la altura donde comienza el color amarillo
-                        startX = x; // Guardar la posición horizontal donde comienza el color amarillo
-                    }
-                    yellowLength++; // Incrementar la longitud del área amarilla
-                } else if (foundYellow) {
-                    // Si ya se encontró una región amarilla y se terminó, guardar la frecuencia
-                    const frequency = calculateFrequency(startY, startY + yellowLength - 1, height, maxFrequency);
-                    frequencies.push({
-                        startTime: (startY / height) * (1 / 22.22), // Calcular tiempo de inicio del intervalo en segundos
-                        frequency: frequency,
-                        column: x, // Guardar la columna donde se encontró el amarillo
-                        startX: startX, // Guardar la posición horizontal donde comienza el color amarillo
-                        startY: height - startY // Invertir la altura
-                    });
-                    foundYellow = false;
-                    startY = -1;
-                    startX = -1;
-                    yellowLength = 0;
-                }
-            }
-
-            // Si al final de la columna hay una región amarilla pendiente de guardar, hacerlo
-            if (foundYellow) {
-                const frequency = calculateFrequency(startY, startY + yellowLength - 1, height, maxFrequency);
-                frequencies.push({
-                    startTime: (startY / height) * (1 / 22.22), // Calcular tiempo de inicio del intervalo en segundos
-                    frequency: frequency,
-                    column: x, // Guardar la columna donde se encontró el amarillo
-                    startX: startX, // Guardar la posición horizontal donde comienza el color amarillo
-                    startY: height - startY // Invertir la altura
-                });
-            }
-        }
-
-        // Función para calcular la frecuencia representativa
-        function calculateFrequency(startY, endY, totalHeight, maxFrequency) {
-            const avgY = (startY + endY) / 2;
-            let frequency = maxFrequency * (1 - avgY / (totalHeight - 77));
-            frequency = frequency + 480;
-
-            if (frequency % 100 >= 50) {
-                return Math.ceil(frequency / 100) * 100; // Redondear hacia arriba al siguiente múltiplo de 100
-            } else {
-                return Math.floor(frequency / 100) * 100; // Redondear hacia abajo al múltiplo de 100 más cercano
-            }
-        }
-
-        // Función para filtrar las entradas y obtener solo startYs únicos por columna
-function filterEntries(entries) {
-    const filteredEntries = [];
-    let previousStartY = undefined;
-
-    for (const entry of entries) {
-        if (entry.startY !== previousStartY) {
-            filteredEntries.push(entry);
-            previousStartY = entry.startY;
-        }
+function findClosestFrequency(freq, map, tolerance = 50) {
+  let closest = null;
+  let minDiff = Infinity;
+  for (let key of Object.keys(map)) {
+    let diff = Math.abs(freq - key);
+    if (diff < minDiff && diff <= tolerance) {
+      minDiff = diff;
+      closest = key;
     }
+  }
+  return closest;
+}
 
-    return filteredEntries;
+function decodeSegment(samples, sampleRate) {
+  const size = nextPowerOf2(samples.length);
+  const paddedSamples = new Float32Array(size);
+  paddedSamples.set(samples);
+
+  const fft = new DSP.FFT(size, sampleRate);
+  fft.forward(paddedSamples);
+  const magnitudes = fft.spectrum;
+
+  const freqStep = sampleRate / size;
+  const frequencyMap = new Map();
+
+  magnitudes.forEach((magnitude, index) => {
+    if (magnitude > 0.0055) { 
+      const frequency = index * freqStep;
+      if (frequencyMap.has(frequency)) {
+        frequencyMap.set(frequency, Math.max(frequencyMap.get(frequency), magnitude));
+      } else {
+        frequencyMap.set(frequency, magnitude);
+      }
+    }
+  });
+
+  let decodedMessage = '';
+  frequencyMap.forEach((magnitude, frequency) => {
+    const closestFrequency = findClosestFrequency(frequency, frequencyToCharMap);
+    if (closestFrequency) {
+      decodedMessage += frequencyToCharMap[closestFrequency];
+    }
+  });
+
+  return decodedMessage;
 }
 
 
+async function analyzeWav(file) {
+  try {
+    const buffer = fs.readFileSync(file);
+    const audioData = await WavDecoder.decode(buffer);
 
-
-      
-        // Filtrar para obtener solo la primera entrada por cada columna
-        const uniqueStartYFrequencies = filterEntries(frequencies);
-
-        // Filtrar para eliminar entradas que no tengan al menos 20 píxeles de distancia entre startY y la anterior
-        const filteredFrequencies1 = uniqueStartYFrequencies.filter((entry, index, arr) => {
-            if (index === 0) return true;
-            return Math.abs(entry.startY - arr[index - 1].startY) >= 20;
-        });
-
-
-        
-        const filteredFrequencies = filteredFrequencies1.filter((entry, index, arr) => {
-            if (index === 0) return true;
-            return Math.abs(entry.startX - arr[index - 1].startX) >= 20;
-        })
-
-
-
-
-
-
-        // Eliminar la última entrada del array
-        if (filteredFrequencies.length > 0) {
-            filteredFrequencies.pop();
-        }
-
-        // Mostrar las frecuencias obtenidas como caracteres
-        //console.log('Caracteres decodificados:');
-      
-//console.table(filteredFrequencies);
-
-        const decodedCharacters = filteredFrequencies.map(freq => {
-            const { frequency } = freq;
-            return frequencyToChar[frequency] || ''; // Obtener el caracter correspondiente a la frecuencia
-        });
-        console.log(decodedCharacters.join(''));
-
-    } catch (err) {
-        console.error('Error al procesar el espectrograma:', err);
+    if (!audioData.channelData || audioData.channelData.length === 0) {
+      throw new Error('No audio data found');
     }
+
+    const samples = audioData.channelData[0];
+    const sampleRate = audioData.sampleRate;
+    const segmentDuration = 0.3; // Duración de cada segmento en segundos
+    const segmentSize = Math.floor(segmentDuration * sampleRate);
+
+    let decodedMessage = '';
+    let prevFrequencies = new Map();
+
+    for (let i = 0; i < samples.length; i += segmentSize) {
+      const segment = samples.slice(i, i + segmentSize);
+      const segmentMessage = decodeSegment(segment, sampleRate);
+
+      segmentMessage.split('').forEach(char => {
+        if (!prevFrequencies.has(char)) {
+          decodedMessage += char;
+          prevFrequencies.set(char, true);
+        }
+      });
+
+      prevFrequencies.clear();
+    }
+
+    console.log(decodedMessage);
+  } catch (error) {
+    console.error('Error analyzing WAV file:', error);
+  }
 }
 
-// Obtener el archivo de audio desde los argumentos de la línea de comandos
 const audioFile = process.argv[2];
 if (!audioFile) {
-    console.error('Debe proporcionar la ruta al archivo de audio como argumento.');
-    process.exit(1);
+  console.error('Debe proporcionar la ruta al archivo de audio como argumento.');
+  process.exit(1);
 }
 
-// Llamar a la función principal para extraer frecuencias
-extractFrequencies(audioFile, 0.3, 8200); // Ejemplo con intervalo de 0.3 segundos y frecuencia máxima de 8200 Hz
+analyzeWav(audioFile);
 
