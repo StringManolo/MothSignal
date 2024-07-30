@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const { exec } = require('child_process');
+const path = require('path');
 
 // Función para leer el archivo y convertirlo a Base64
 function archivoABase64(filename) {
@@ -28,13 +29,17 @@ function generarTono(frecuencia, duracion, nombreArchivo, maxFrequency) {
 // Función principal que convierte una cadena Base64 en tonos de audio
 async function convertirBase64ATonos(base64String, mapsPath) {
     const tonosDirectorio = 'tonos_encoding/';
+    const cacheDirectorio = 'tonos_cache/';
     try {
         const maps = JSON.parse(fs.readFileSync(mapsPath));
         const duracionPorCaracter = maps.duracion;
 
-        // Crear el directorio si no existe
+        // Crear los directorios si no existen
         if (!fs.existsSync(tonosDirectorio)) {
             fs.mkdirSync(tonosDirectorio);
+        }
+        if (!fs.existsSync(cacheDirectorio)) {
+            fs.mkdirSync(cacheDirectorio);
         }
 
         // Copiar maps.json al directorio de tonos
@@ -49,9 +54,18 @@ async function convertirBase64ATonos(base64String, mapsPath) {
             const tono = Object.values(maps.tonos).find(t => t.caracter === caracter);
 
             if (tono) {
+                const nombreArchivoCache = `${cacheDirectorio}tono_${tono.frecuencia}_${duracionPorCaracter}.wav`;
                 const nombreArchivo = `${tonosDirectorio}tono_${i.toString().padStart(3, '0')}.wav`;
-                console.log(`Generando tono para el caracter: ${caracter} con frecuencia: ${tono.frecuencia} y nombre de archivo: ${nombreArchivo}`);
-                await generarTono(tono.frecuencia, duracionPorCaracter, nombreArchivo, maxFrequency);
+
+                // Verificar si el tono ya existe en el caché
+                if (fs.existsSync(nombreArchivoCache)) {
+                    console.log(`Tono en caché encontrado para la frecuencia: ${tono.frecuencia}. Copiando ${nombreArchivoCache} a ${nombreArchivo}`);
+                    fs.copyFileSync(nombreArchivoCache, nombreArchivo);
+                } else {
+                    console.log(`Generando tono para el caracter: ${caracter} con frecuencia: ${tono.frecuencia} y nombre de archivo: ${nombreArchivo}`);
+                    await generarTono(tono.frecuencia, duracionPorCaracter, nombreArchivoCache, maxFrequency);
+                    fs.copyFileSync(nombreArchivoCache, nombreArchivo);
+                }
             } else {
                 console.error(`No se encontró el tono para el carácter: ${caracter}`);
             }

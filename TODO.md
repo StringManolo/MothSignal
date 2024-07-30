@@ -1,8 +1,5 @@
 # TODO
 
-##### Optimizar encoding 
-- Utilizar cp en lugar de generar los tonos con ffmpeg para tonos que ya existan. O en su defecto usar la xarpeta de tonos/ para copiarlos.
-
 ##### Crear script de install.sh
 
 ##### Incluir Play en modos de operacion
@@ -31,3 +28,6 @@ Posiblemente no funciona por la compresión
 ##### Añadir argumento ultrasound para mover las frecuentas a ultrasonidos
 
 ##### Allow mutiple output formats
+
+##### Allow overwrite of tonos
+

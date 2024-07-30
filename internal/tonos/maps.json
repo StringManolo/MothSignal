@@ -330,11 +330,6 @@
       "caracter": "=",
       "frecuencia": 2100,
       "archivo": "tono_064.wav"
-    },
-    "65": {
-      "caracter": ",",
-      "frecuencia": 400,
-      "archivo": "tono_065.wav"
     }
   }
 }
